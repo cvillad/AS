@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -581,7 +582,7 @@ public class Main extends javax.swing.JFrame {
     private void chooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooserActionPerformed
         // TODO add your handling code here:
         chooserFrame.setVisible(false);
-        try{
+        if (chooser.getSelectedFile()!=null) {
             mtableModel=new DefaultTableModel();
             terminal.clear();
             noterminal.clear();
@@ -590,18 +591,18 @@ public class Main extends javax.swing.JFrame {
             File file = chooser.getSelectedFile();
             String fullPath = file.getAbsolutePath();
             ArrayList<String> vec = new ArrayList();
-            ArrayList<String> j1 = new ArrayList();
-            ArrayList<String> gram = new ArrayList();
+            ArrayList<String> j1;
+            ArrayList<String> gram;
             try {
                 FileInputStream archivo = new FileInputStream(fullPath);
-                DataInputStream entrada = new DataInputStream(archivo);
-                BufferedReader buffer = new BufferedReader(new InputStreamReader(entrada));
-                String lineas;
-                while ((lineas = buffer.readLine()) != null) {
-                    vec.add(lineas);
+                try (DataInputStream entrada = new DataInputStream(archivo)) {
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(entrada));
+                    String lineas;
+                    while ((lineas = buffer.readLine()) != null) {
+                        vec.add(lineas);
+                    }
                 }
-                entrada.close();
-            } catch (Exception e) {
+            } catch (IOException e) {
             }
             //gramaticaTextArea.setOpaque(false);
             //gramaticaTextArea.setBackground(new Color(0, 0, 0, 0));
@@ -618,10 +619,8 @@ public class Main extends javax.swing.JFrame {
             Primero();
             Siguiente();
             tablaM();
-            
+            chooser.setSelectedFile(null);
             jButton2.setEnabled(true);
-        }catch(Exception error){
-            //JOptionPane.showMessageDialog(jMenu1, "Error","Error",JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_chooserActionPerformed
 
@@ -653,12 +652,11 @@ public class Main extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        if (chooser.showOpenDialog(this)==JFileChooser.APPROVE_OPTION) {
+        //if (chooser.showOpenDialog(this)==JFileChooser.APPROVE_OPTION) {
             chooserFrame.setVisible(true);
             chooserFrame.pack();
             chooserFrame.setLocationRelativeTo(null);
-        }
-        
+        //}
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
