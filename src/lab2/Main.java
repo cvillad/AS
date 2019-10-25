@@ -205,11 +205,6 @@ public class Main extends javax.swing.JFrame {
             primsigTextArea.append("PRIMERO("+t.getSymbol()+")="+t.getPrimero());
             primsigTextArea.append(System.getProperty("line.separator"));
         }
-        for (noTerminal t: noterminal){
-        for (Map.Entry<String,HashSet<String>> p: t.getProducciones().entrySet()) {
-            System.out.println("Producción: " + p.getKey() + " Columnas: " + p.getValue());
-        }
-        }
     }
     
     public void Siguiente() {
@@ -231,7 +226,7 @@ public class Main extends javax.swing.JFrame {
                 String producido=prod.getKey();
                 int sw=0;
                 int i=producido.indexOf(nt.getSymbol());
-                if (producido.contains(nt.getSymbol()) && !cabezote.equals(nt.getSymbol())) {
+                if (producido.contains(nt.getSymbol())) {
                     if(i+1<producido.length() && !(producido.substring(i+1,i+2).equals("'") && !nt.getSymbol().contains("'"))){
                         if (nt.getSymbol().contains("'")) {
                             s+=arrayToString(find(nt.getSymbol().substring(0,1)).getSiguiente());
@@ -239,9 +234,11 @@ public class Main extends javax.swing.JFrame {
                             sw=1;
                             i=producido.indexOf(nt.getSymbol())+1;
                         }
-                    }else if(i+1==producido.length()){
-                        sw=1;
+                    }else if(i+1==producido.length() && !cabezote.equals(nt.getSymbol())){
                         i=producido.indexOf(nt.getSymbol())+1;
+                        if (find(cabezote).getSiguiente().size()>0) {
+                            s+=arrayToString(find(cabezote).getSiguiente());
+                        }else s+=Sgte(find(cabezote),s);
                     }
                 }
                 if (sw==1) {
@@ -255,19 +252,15 @@ public class Main extends javax.swing.JFrame {
                             }      
                             noTerminal t=find(next);
                             for(String p: t.getPrimero()){
-                                if (p.equals("&")) {
+                                if (!p.equals("&")) {
+                                    s+=p+", ";
+                                }else if(!cabezote.equals(nt.getSymbol())){ 
                                     if (find(cabezote).getSiguiente().size()>0) {
                                         s+=arrayToString(find(cabezote).getSiguiente());
                                     }else s+=Sgte(find(cabezote),s);
-                                }else{ 
-                                    s+=p+", ";
                                 }
                             }
                         }
-                    }else{
-                        if (find(cabezote).getSiguiente().size()>0) {
-                            s+=arrayToString(find(cabezote).getSiguiente());
-                        }else s+=Sgte(find(cabezote),s);
                     }
                 }
             }
@@ -515,8 +508,8 @@ public class Main extends javax.swing.JFrame {
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(42, 42, 42)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
