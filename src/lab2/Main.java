@@ -389,8 +389,6 @@ public class Main extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
-        chooserFrame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         chooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chooserActionPerformed(evt);

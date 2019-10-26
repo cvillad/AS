@@ -3,9 +3,6 @@
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JFrame" name="chooserFrame">
-      <Properties>
-        <Property name="defaultCloseOperation" type="int" value="3"/>
-      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
