@@ -604,6 +604,7 @@ public class Main extends javax.swing.JFrame {
             terminal.clear();
             noterminal.clear();
             prim.setText("");
+            sgt.setText("");
             gramaticaTextArea.setText("");
             File file = chooser.getSelectedFile();
             String fullPath = file.getAbsolutePath();
