@@ -142,7 +142,6 @@ public class Main extends javax.swing.JFrame {
                             cont2 = cont - 1;
                             d2 = d;
                             z2 = z;
-                            // System.out.println(d);
                             break outerloop;
                         }
                     }
@@ -191,7 +190,6 @@ public class Main extends javax.swing.JFrame {
                     p+=Prim(find(t.getKey().substring(0, 1)),"");
                     nt.addColumn(Prim(find(t.getKey().substring(0, 1)),"").split(", "),t.getKey());
                 }
-                //nt.addColumn(p.split(", "),t.getKey());
             }    
             
         }   
@@ -617,30 +615,68 @@ public class Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_chooserActionPerformed
 
+    public String pilaToString(Stack<String> pila){
+        String s="";
+        for (String i: pila) {
+            s+=i;
+        }
+        return s;
+    }
+    
+    public Stack<String> alreves(String prod, Stack pila){
+        int n;
+        if (prod.substring(1, 2).equals("'")) {
+            n=4;
+        }else n=3;
+        for (int i = prod.length()-1; i >= n; i--) {
+            if (prod.substring(i, i+1).equals("'")) {
+                pila.push(prod.substring(i-1, i+1));
+                i--;
+            }else if (!prod.substring(i, i+1).equals("&")) {
+                pila.push(prod.substring(i, i+1));
+                
+            }
+        }
+        return pila;
+    }
+    
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         DefaultTableModel model=new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Pila","Entrada","Salida"});
         model.setColumnCount(3);
-        String cadena="$"+jTextField1.getText();
-        Stack pila=new Stack();
+        String cadena=jTextField1.getText()+"$";
+        Stack<String> pila=new Stack();
         pila.push("$");
         pila.push(noterminal.get(0).getSymbol());
-        System.out.println("R: "+mtableModel.getValueAt(0,1+terminal.indexOf(cadena.substring(0,1))));
-        String salida=mtableModel.getValueAt(0,1+terminal.indexOf(cadena.substring(1,2))).toString();
-        model.addRow(new Object[]{"$"+pila.pop(),cadena,salida});
         reconocerTable.setModel(model);
-        //while(!pila.isEmpty() && cadena.equals("")){
-            if (pila.pop().equals(cadena.substring(0,1))) {
-                pila.push(pila);
-                cadena=cadena.substring(1);
+        String Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();;
+        String salida="";
+        while(!pila.peek().equals("$")){   
+            if (terminal.contains(pila.peek()) || pila.peek().equals("$") || pila.peek().equals("&")) {
+                if (pila.peek().equals(cadena.substring(0, 1))) {
+                    salida="";
+                    model.addRow(new Object[]{pilaToString(pila),cadena,salida});
+                    pila.pop();
+                    cadena=cadena.substring(1);
+                    System.out.println("["+pila.peek()+","+cadena+"]: "+Mij);
+                    if(find(pila.peek())!=null && mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1)))!=null){
+                        Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();
+                    }else Mij="";
+                }else break;
             }else{
-
-            }  
-        //}
-        
-        
-        
+                if (Mij.contains("->")) {
+                    Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();
+                    salida=Mij;
+                    model.addRow(new Object[]{pilaToString(pila),cadena,salida});
+                    pila.pop();
+                    pila=alreves(Mij,pila);
+                }else break;
+            }
+        }
+        if (pila.peek().equals("$") && cadena.equals("$"))salida="Aceptar";
+        else salida="error";
+        model.addRow(new Object[]{pilaToString(pila),cadena,salida});
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
