@@ -202,7 +202,11 @@ public class Main extends javax.swing.JFrame {
                             lim=i+1;
                             sw2=0;
                         }
-                        if (Prim(find(t.getKey().substring(i, lim)),"",0).contains("&")) {
+                        System.out.println(i+" : "+lim+" -"+t.getKey().substring(i,lim));
+                        if (find(t.getKey().substring(i, lim))==null) {
+                            t.getValue().add(t.getKey().substring(i,i+1));
+                            return p+t.getKey().substring(i, i+1);
+                        }else if (Prim(find(t.getKey().substring(i, lim)),"",0).contains("&")) {
                             if (i==t.getKey().length()-1) {
                                 p+=Prim(find(t.getKey().substring(i, lim)),"",0);
                                 nt.addColumn(Prim(find(t.getKey().substring(i, lim)),"",0).split(", "),t.getKey());
