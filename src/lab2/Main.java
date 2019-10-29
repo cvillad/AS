@@ -282,7 +282,6 @@ public class Main extends javax.swing.JFrame {
                                 next=producido.substring(i, i+2);
                             }      
                             noTerminal t=find(next);
-                            //System.out.println(""+t.getPrimero());
                             for(String p: t.getPrimero()){
                                 if (!p.equals("&")) {
                                     s+=p+", ";
@@ -291,9 +290,7 @@ public class Main extends javax.swing.JFrame {
                                         next=next.substring(0, 1);
                                         t=find(next);
                                     }
-                                    //System.out.println("algo");
                                     if (t.getSiguiente().size()>0) {
-                                        //System.out.println(t.getSiguiente());
                                         s+=arrayToString(t.getSiguiente());
                                     }else s+=Sgte(t,s);
                                 }
@@ -713,7 +710,10 @@ public class Main extends javax.swing.JFrame {
         pila.push("$");
         pila.push(noterminal.get(0).getSymbol());
         reconocerTable.setModel(model);
-        String Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();;
+        String Mij="";
+        try{Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();
+        }catch(Exception e){
+        }
         String salida="";
         while(!pila.peek().equals("$")){   
             if (terminal.contains(pila.peek()) || pila.peek().equals("$") || pila.peek().equals("&")) {
