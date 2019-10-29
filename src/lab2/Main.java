@@ -202,7 +202,6 @@ public class Main extends javax.swing.JFrame {
                             lim=i+1;
                             sw2=0;
                         }
-                        System.out.println(i+" : "+lim+" -"+t.getKey().substring(i,lim));
                         if (find(t.getKey().substring(i, lim))==null) {
                             t.getValue().add(t.getKey().substring(i,i+1));
                             return p+t.getKey().substring(i, i+1);
@@ -283,11 +282,18 @@ public class Main extends javax.swing.JFrame {
                                 next=producido.substring(i, i+2);
                             }      
                             noTerminal t=find(next);
+                            //System.out.println(""+t.getPrimero());
                             for(String p: t.getPrimero()){
                                 if (!p.equals("&")) {
                                     s+=p+", ";
-                                }else if(!cabezote.equals(nt.getSymbol())){ 
+                                }else if(!cabezote.equals(t.getSymbol()) && !cabezote.equals(nt.getSymbol())){
+                                    if (next.length()==2) {
+                                        next=next.substring(0, 1);
+                                        t=find(next);
+                                    }
+                                    //System.out.println("algo");
                                     if (t.getSiguiente().size()>0) {
+                                        //System.out.println(t.getSiguiente());
                                         s+=arrayToString(t.getSiguiente());
                                     }else s+=Sgte(t,s);
                                 }
