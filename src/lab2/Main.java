@@ -177,18 +177,52 @@ public class Main extends javax.swing.JFrame {
         return vec3;
     }
 
-    public String Prim(noTerminal nt, String p){
+    public String Prim(noTerminal nt, String p,int sw){
         for (Map.Entry<String,HashSet<String>> t: nt.getProducciones().entrySet()) {
             if (find(t.getKey().substring(0,1))==null) {
-                p+=t.getKey().substring(0,1)+", ";
-                t.getValue().add(t.getKey().substring(0,1));
+                /*System.out.println(nt.getSymbol()+"-> "+t.getKey());
+                if (t.getKey().substring(0,1).equals("&")) {
+                    for (int i = 1; i < t.getKey().length(); i++) {
+                        System.out.println(t.getKey().substring(i,i+1));
+                        p+=Prim(find(t.getKey().substring(i,i+1)),p);
+                        t.getValue().add(t.getKey().substring(i,i+1));
+                    }
+                }*/
+                if (t.getKey().substring(0,1).equals("&")) {
+                    if (sw==0) {
+                        p+=t.getKey().substring(0,1)+", ";
+                        t.getValue().add(t.getKey().substring(0,1));
+                    } 
+                }else{
+                    p+=t.getKey().substring(0,1)+", ";
+                    t.getValue().add(t.getKey().substring(0,1));
+                }
             }else{
                 if (t.getKey().length()>1 && t.getKey().substring(1, 2).equals("'")) {
-                    p+=Prim(find(t.getKey().substring(0, 2)),"");
-                    nt.addColumn(Prim(find(t.getKey().substring(0, 2)),"").split(", "),t.getKey());
+                    p+=Prim(find(t.getKey().substring(0, 2)),"",0);
+                    nt.addColumn(Prim(find(t.getKey().substring(0, 2)),"",0).split(", "),t.getKey());
                 }else {
-                    p+=Prim(find(t.getKey().substring(0, 1)),"");
-                    nt.addColumn(Prim(find(t.getKey().substring(0, 1)),"").split(", "),t.getKey());
+                    if (Prim(find(t.getKey().substring(0, 1)),"",0).contains("&")) {
+                        int l;
+                        for (int i = 0; i < t.getKey().length(); i++) {
+                            if (Prim(find(t.getKey().substring(i, i+1)),"",0).contains("&")) {
+                                if (i==t.getKey().length()-1) {
+                                    p+=Prim(find(t.getKey().substring(i, i+1)),"",0);
+                                    nt.addColumn(Prim(find(t.getKey().substring(i, i+1)),"",0).split(", "),t.getKey());
+                                }else{
+                                    p+=Prim(find(t.getKey().substring(i, i+1)),"",1);
+                                    nt.addColumn(Prim(find(t.getKey().substring(i, i+1)),"",1).split(", "),t.getKey());
+                                }
+                            }else{
+                                p+=Prim(find(t.getKey().substring(i, i+1)),"",0);
+                                nt.addColumn(Prim(find(t.getKey().substring(i, i+1)),"",0).split(", "),t.getKey());
+                            }
+                                
+                        }
+                    }else{
+                        p+=Prim(find(t.getKey().substring(0, 1)),"",0);
+                        nt.addColumn(Prim(find(t.getKey().substring(0, 1)),"",0).split(", "),t.getKey());
+                    }
                 }
             }    
             
@@ -198,7 +232,7 @@ public class Main extends javax.swing.JFrame {
     
     public void Primero() {
         for (noTerminal t: noterminal) {
-            String s=Prim(t,"");
+            String s=Prim(t,"",0);
             t.setPrimero(s.split(", "));
             prim.append("PRIMERO("+t.getSymbol()+")="+t.getPrimero());
             prim.append(System.getProperty("line.separator"));
@@ -253,9 +287,9 @@ public class Main extends javax.swing.JFrame {
                                 if (!p.equals("&")) {
                                     s+=p+", ";
                                 }else if(!cabezote.equals(nt.getSymbol())){ 
-                                    if (find(cabezote).getSiguiente().size()>0) {
-                                        s+=arrayToString(find(cabezote).getSiguiente());
-                                    }else s+=Sgte(find(cabezote),s);
+                                    if (t.getSiguiente().size()>0) {
+                                        s+=arrayToString(t.getSiguiente());
+                                    }else s+=Sgte(t,s);
                                 }
                             }
                         }
@@ -622,8 +656,6 @@ public class Main extends javax.swing.JFrame {
                 }
             } catch (IOException e) {
             }
-            //gramaticaTextArea.setOpaque(false);
-            //gramaticaTextArea.setBackground(new Color(0, 0, 0, 0));
             j1 = Recursividad(vec);
             gram = Factorizacion(j1);
             gram = ordenar(vec, gram);
@@ -632,8 +664,6 @@ public class Main extends javax.swing.JFrame {
                 gramaticaTextArea.append(System.getProperty("line.separator"));
             }
             Terminal(gram);
-            //primsigTextArea.setOpaque(false);
-            //primsigTextArea.setBackground(new Color(0, 0, 0, 0));
             Primero();
             Siguiente();
             tablaM();
@@ -693,11 +723,15 @@ public class Main extends javax.swing.JFrame {
                 }else break;
             }else{
                 if (Mij.contains("->")) {
-                    Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();
-                    salida=Mij;
-                    model.addRow(new Object[]{pilaToString(pila),cadena,salida});
-                    pila.pop();
-                    pila=alreves(Mij,pila);
+                    try{
+                        Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();
+                        salida=Mij;
+                        model.addRow(new Object[]{pilaToString(pila),cadena,salida});
+                        pila.pop();
+                        pila=alreves(Mij,pila);
+                    }catch(Exception e){
+                        break;
+                    }
                 }else break;
             }
         }
