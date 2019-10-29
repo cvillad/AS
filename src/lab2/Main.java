@@ -327,7 +327,7 @@ public class Main extends javax.swing.JFrame {
                         mtableModel.setValueAt(nt.getSymbol()+"->"+prod.getKey(), noterminal.indexOf(nt), terminal.indexOf(columna)+1);
                     }else{
                         for (String sig: nt.getSiguiente()) {
-                            mtableModel.setValueAt(nt.getSymbol()+"->"+prod.getKey(), noterminal.indexOf(nt), terminal.indexOf(sig)+1);
+                            mtableModel.setValueAt(nt.getSymbol()+"->"+prod.getKey(), noterminal.indexOf(nt), terminal.indexOf(sig)+1); 
                         }
                     }
                 }
