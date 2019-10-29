@@ -72,9 +72,6 @@ public class Main extends javax.swing.JFrame {
                 vec2.add(x);
             }
         }
-//        for (String s : vec2) {
-//            System.out.println(s);
-//        }
         return vec2;
     }
 
@@ -179,15 +176,11 @@ public class Main extends javax.swing.JFrame {
 
     public String Prim(noTerminal nt, String p,int sw){
         for (Map.Entry<String,HashSet<String>> t: nt.getProducciones().entrySet()) {
-            if (find(t.getKey().substring(0,1))==null) {
-                /*System.out.println(nt.getSymbol()+"-> "+t.getKey());
-                if (t.getKey().substring(0,1).equals("&")) {
-                    for (int i = 1; i < t.getKey().length(); i++) {
-                        System.out.println(t.getKey().substring(i,i+1));
-                        p+=Prim(find(t.getKey().substring(i,i+1)),p);
-                        t.getValue().add(t.getKey().substring(i,i+1));
-                    }
-                }*/
+            int lim2=1;
+            if (t.getKey().length()>1 && t.getKey().substring(1, 2).equals("'")) {
+                lim2=2;
+            }
+            if (find(t.getKey().substring(0,lim2))==null) {
                 if (t.getKey().substring(0,1).equals("&")) {
                     if (sw==0) {
                         p+=t.getKey().substring(0,1)+", ";
@@ -198,31 +191,34 @@ public class Main extends javax.swing.JFrame {
                     t.getValue().add(t.getKey().substring(0,1));
                 }
             }else{
-                if (t.getKey().length()>1 && t.getKey().substring(1, 2).equals("'")) {
-                    p+=Prim(find(t.getKey().substring(0, 2)),"",0);
-                    nt.addColumn(Prim(find(t.getKey().substring(0, 2)),"",0).split(", "),t.getKey());
-                }else {
-                    if (Prim(find(t.getKey().substring(0, 1)),"",0).contains("&")) {
-                        int l;
-                        for (int i = 0; i < t.getKey().length(); i++) {
-                            if (Prim(find(t.getKey().substring(i, i+1)),"",0).contains("&")) {
-                                if (i==t.getKey().length()-1) {
-                                    p+=Prim(find(t.getKey().substring(i, i+1)),"",0);
-                                    nt.addColumn(Prim(find(t.getKey().substring(i, i+1)),"",0).split(", "),t.getKey());
-                                }else{
-                                    p+=Prim(find(t.getKey().substring(i, i+1)),"",1);
-                                    nt.addColumn(Prim(find(t.getKey().substring(i, i+1)),"",1).split(", "),t.getKey());
-                                }
-                            }else{
-                                p+=Prim(find(t.getKey().substring(i, i+1)),"",0);
-                                nt.addColumn(Prim(find(t.getKey().substring(i, i+1)),"",0).split(", "),t.getKey());
-                            }
-                                
+                if (Prim(find(t.getKey().substring(0, lim2)),"",0).contains("&")) {
+                    int sw2=0;
+                    int lim=0;
+                    for (int i = 0; i < t.getKey().length(); i++) {
+                        if (i+1<t.getKey().length() && t.getKey().substring(i+1, i+2).equals("'")) {
+                            sw2=1;
+                            lim=i+2;
+                        }else {
+                            lim=i+1;
+                            sw2=0;
                         }
-                    }else{
-                        p+=Prim(find(t.getKey().substring(0, 1)),"",0);
-                        nt.addColumn(Prim(find(t.getKey().substring(0, 1)),"",0).split(", "),t.getKey());
+                        if (Prim(find(t.getKey().substring(i, lim)),"",0).contains("&")) {
+                            if (i==t.getKey().length()-1) {
+                                p+=Prim(find(t.getKey().substring(i, lim)),"",0);
+                                nt.addColumn(Prim(find(t.getKey().substring(i, lim)),"",0).split(", "),t.getKey());
+                            }else{
+                                p+=Prim(find(t.getKey().substring(i, lim)),"",1);
+                                nt.addColumn(Prim(find(t.getKey().substring(i, lim)),"",1).split(", "),t.getKey());
+                            }
+                        }else{
+                            p+=Prim(find(t.getKey().substring(i, lim)),"",0);
+                            nt.addColumn(Prim(find(t.getKey().substring(i, lim)),"",0).split(", "),t.getKey());
+                        }
+                        if (sw2==1)i++;
                     }
+                }else{
+                    p+=Prim(find(t.getKey().substring(0, lim2)),"",0);
+                    nt.addColumn(Prim(find(t.getKey().substring(0, lim2)),"",0).split(", "),t.getKey());
                 }
             }    
             
@@ -716,7 +712,6 @@ public class Main extends javax.swing.JFrame {
                     model.addRow(new Object[]{pilaToString(pila),cadena,salida});
                     pila.pop();
                     cadena=cadena.substring(1);
-                   // System.out.println("["+pila.peek()+","+cadena+"]: "+Mij);
                     if(find(pila.peek())!=null && mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1)))!=null){
                         Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();
                     }else Mij="";
