@@ -33,6 +33,7 @@ public class Main extends javax.swing.JFrame {
     ArrayList<noTerminal> noterminal = new ArrayList();
     HashMap<String, HashSet <String>> prodM=new LinkedHashMap();
     DefaultTableModel mtableModel;
+    DefaultTableModel rectableModel=new DefaultTableModel();
 
     /**
      * Creates new form Main
@@ -251,6 +252,7 @@ public class Main extends javax.swing.JFrame {
     }
     
     public String Sgte(noTerminal nt, String s){
+        System.out.println("monda: "+nt.getSymbol());
         for(noTerminal not: noterminal){
             String cabezote=not.getSymbol();
             for (Map.Entry<String,HashSet<String>> prod: not.getProducciones().entrySet()) {
@@ -444,6 +446,7 @@ public class Main extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Arial Black", 2, 18)); // NOI18N
         jLabel1.setText("Gramatica sin Vicios");
@@ -499,9 +502,9 @@ public class Main extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel6))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -517,10 +520,7 @@ public class Main extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {},
-                {},
-                {},
-                {}
+
             },
             new String [] {
 
@@ -586,9 +586,9 @@ public class Main extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -637,6 +637,7 @@ public class Main extends javax.swing.JFrame {
         // TODO add your handling code here:
         chooserFrame.setVisible(false);
         if (chooser.getSelectedFile()!=null) {
+            rectableModel.setRowCount(0);
             mtableModel=new DefaultTableModel();
             terminal.clear();
             noterminal.clear();
@@ -702,14 +703,14 @@ public class Main extends javax.swing.JFrame {
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model=new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"Pila","Entrada","Salida"});
-        model.setColumnCount(3);
-        String cadena=jTextField1.getText()+"$";
+        rectableModel.setRowCount(0);
+        rectableModel.setColumnIdentifiers(new Object[]{"Pila","Entrada","Salida"});
+        rectableModel.setColumnCount(3);
+        String cadena=jTextField1.getText().replaceAll("&","")+"$";
         Stack<String> pila=new Stack();
         pila.push("$");
         pila.push(noterminal.get(0).getSymbol());
-        reconocerTable.setModel(model);
+        reconocerTable.setModel(rectableModel);
         String Mij="";
         try{Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();
         }catch(Exception e){
@@ -719,7 +720,7 @@ public class Main extends javax.swing.JFrame {
             if (terminal.contains(pila.peek()) || pila.peek().equals("$") || pila.peek().equals("&")) {
                 if (pila.peek().equals(cadena.substring(0, 1))) {
                     salida="";
-                    model.addRow(new Object[]{pilaToString(pila),cadena,salida});
+                    rectableModel.addRow(new Object[]{pilaToString(pila),cadena,salida});
                     pila.pop();
                     cadena=cadena.substring(1);
                     if(find(pila.peek())!=null && mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1)))!=null){
@@ -731,7 +732,7 @@ public class Main extends javax.swing.JFrame {
                     try{
                         Mij=mtableModel.getValueAt(noterminal.indexOf(find(pila.peek())),1+terminal.indexOf(cadena.substring(0,1))).toString();
                         salida=Mij;
-                        model.addRow(new Object[]{pilaToString(pila),cadena,salida});
+                        rectableModel.addRow(new Object[]{pilaToString(pila),cadena,salida});
                         pila.pop();
                         pila=alreves(Mij,pila);
                     }catch(Exception e){
@@ -742,7 +743,7 @@ public class Main extends javax.swing.JFrame {
         }
         if (pila.peek().equals("$") && cadena.equals("$"))salida="Aceptar";
         else salida="Error";
-        model.addRow(new Object[]{pilaToString(pila),cadena,salida});
+        rectableModel.addRow(new Object[]{pilaToString(pila),cadena,salida});
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
